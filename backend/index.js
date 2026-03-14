@@ -3,26 +3,19 @@ const cors = require('cors');
 require('dotenv').config();
 const { Pool } = require('pg');
 
+const app = express();
+
+app.use(cors()); 
+app.use(express.json());
+
 const pool = new Pool({
-    // Render will inject the Neon URL here automatically
     connectionString: process.env.DATABASE_URL || 'postgres://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/your_local_db_name',
-    
-    // Cloud databases require SSL, local ones usually don't
     ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false 
 });
 
-// Also, update your app.listen at the bottom of the file to accept Render's dynamic port!
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});3000;
-
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-}));
-
-app.use(express.json());
+// ==========================================
+// ALL YOUR ROUTES GO HERE (app.get, app.post, etc.)
+// ==========================================
 
 //endpoints 
 
@@ -309,6 +302,8 @@ app.delete('/products/:id', async (req, res) => {
     }
 });
 
+// 4. Start the server at the VERY END of the file
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
