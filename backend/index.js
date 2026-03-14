@@ -1,10 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const pool = require('./db');
+const { Pool } = require('pg');
 
-const app = express();
+const pool = new Pool({
+    // Render will inject the Neon URL here automatically
+    connectionString: process.env.DATABASE_URL || 'postgres://postgres:YOUR_LOCAL_PASSWORD@localhost:5432/your_local_db_name',
+    
+    // Cloud databases require SSL, local ones usually don't
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false 
+});
+
+// Also, update your app.listen at the bottom of the file to accept Render's dynamic port!
 const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});3000;
 
 app.use(cors({
     origin: 'http://localhost:5173',
