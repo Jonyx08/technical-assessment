@@ -4,6 +4,7 @@ import ProductCreate from './ProductCreate';
 import ProductUpdate from './ProductUpdate';
 import ProviderList from './ProviderList';
 import ProviderCreate from './ProviderCreate';
+import ProviderUpdate from './ProviderUpdate';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           
           <Route path="/providers" element={<ProviderList />} />
           <Route path="/providers/new" element={<ProviderCreate />} /> 
+          <Route path="/providers/edit/:id" element={<ProviderUpdate />} />
         </Routes>
       </div>
     </BrowserRouter>
