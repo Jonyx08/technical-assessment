@@ -105,44 +105,38 @@ app.get('/providers', async (req, res) => {
     }
 });
 
-// GET /providers/:id  retrieve a single provider 
+// 1. Get a single provider (Fixes the page loading error)
 app.get('/providers/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const provider = await pool.query('SELECT * FROM providers WHERE id = $1', [id]);
-
-        if (provider.rows.length === 0) {
-            return res.status(404).json({ success: false, error: { message: "Provider not found" } }); // [cite: 104]
+        const result = await pool.query('SELECT * FROM providers WHERE id = $1', [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Provider not found" });
         }
-
-        res.status(200).json({ success: true, data: provider.rows[0] }); // [cite: 104]
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ success: false, error: { message: "Internal server error" } }); // [cite: 104]
+        
+        res.json({ data: result.rows[0] });
+    } catch (error) {
+        console.error("Error fetching provider:", error);
+        res.status(500).json({ error: "Server error" });
     }
 });
 
-// PUT /providers/:id update an existing provider 
+// 2. Update a provider (Fixes the "Save Changes" button error)
 app.put('/providers/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { name, address, phone, description } = req.body;
-
-        const updateQuery = `
-            UPDATE providers 
-            SET name = $1, address = $2, phone = $3, description = $4, updated_at = CURRENT_TIMESTAMP 
-            WHERE id = $5 RETURNING *
-        `;
-        const updatedProvider = await pool.query(updateQuery, [name, address, phone, description, id]);
-
-        if (updatedProvider.rows.length === 0) {
-            return res.status(404).json({ success: false, error: { message: "Provider not found" } }); // [cite: 104]
-        }
-
-        res.status(200).json({ success: true, data: updatedProvider.rows[0] }); // [cite: 104]
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ success: false, error: { message: "Internal server error" } }); // [cite: 104]
+        
+        await pool.query(
+            'UPDATE providers SET name = $1, address = $2, phone = $3, description = $4 WHERE id = $5',
+            [name, address, phone, description, id]
+        );
+        
+        res.json({ message: "Provider updated successfully" });
+    } catch (error) {
+        console.error("Error updating provider:", error);
+        res.status(500).json({ error: "Server error" });
     }
 });
 
