@@ -36,23 +36,16 @@ const obtenerProductoPorId = async (req, res) => {
 };
 
 const actualizarProducto = async (req, res) => {
-    // 1. Sacamos el ID de la URL y los datos nuevos del cuerpo de la petición
     const { id } = req.params;
-    const { nombre, categoria, precio, stock } = req.body;
-
+    const { name, description, price, provider_id } = req.body;
     try {
-        // 2. Le decimos a Neon que actualice la tabla "productos"
         const result = await pool.query(
-            "UPDATE productos SET nombre = $1, categoria = $2, precio = $3, stock = $4 WHERE id = $5 RETURNING *",
-            [nombre, categoria, precio, stock, id]
+            "UPDATE products SET name = $1, description = $2, price = $3, provider_id = $4 WHERE id = $5 RETURNING *",
+            [name, description, price, provider_id, id]
         );
-
-        // 3. Si no encuentra el producto, avisamos
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: "Producto no encontrado" });
         }
-
-        // 4. Si todo sale bien, devolvemos el producto actualizado
         res.json({ success: true, data: result.rows[0] });
     } catch (error) {
         console.error("Error al actualizar producto:", error);
@@ -60,29 +53,28 @@ const actualizarProducto = async (req, res) => {
     }
 };
 
+// 5. Eliminar un producto
 const eliminarProducto = async (req, res) => {
-    // 1. Sacamos el ID de la URL
     const { id } = req.params;
-
     try {
-        // 2. Le decimos a Neon que borre la fila en la tabla "productos"
-        const result = await pool.query(
-            "DELETE FROM productos WHERE id = $1 RETURNING *",
-            [id]
-        );
-
-        // 3. Si no borró nada porque no existía, avisamos
+        const result = await pool.query("DELETE FROM products WHERE id = $1 RETURNING *", [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: "Producto no encontrado" });
         }
-
-        // 4. Si lo borró, enviamos un mensaje de éxito
         res.json({ success: true, message: "Producto eliminado correctamente" });
     } catch (error) {
         console.error("Error al eliminar producto:", error);
         res.status(500).json({ success: false, message: "Error interno del servidor" });
     }
 };
+
+const { name, description, price, provider, image_url} = req.body;
+
+const result = await pool.query(
+    "INSERT INTO products (name, description, price, provider_id, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+    [name, description, price, provider_id, image_url]
+)
+
 
 // Exportamos todas las funciones para que las rutas las puedan usar
 module.exports = {
