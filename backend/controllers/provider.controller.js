@@ -1,3 +1,5 @@
+const pool = require('../config/db');
+
 // 1. Crear un proveedor (POST)
 const crearProveedor = async (req, res) => {
     try {
@@ -101,9 +103,7 @@ const eliminarProveedor = async (req, res) => {
     }
 };
 
-// ==========================================
-// ¡SÚPER IMPORTANTE! El "puente" de salida
-// ==========================================
+
 module.exports = {
     crearProveedor,
     obtenerProveedores,

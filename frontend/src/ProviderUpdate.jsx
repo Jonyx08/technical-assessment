@@ -39,7 +39,17 @@ function ProviderUpdate() {
     }, [id, navigate]);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        // Si el usuario está escribiendo en el campo de teléfono, aplicamos el filtro
+        if (name === 'phone') {
+            const valorLimpio = value.replace(/[^0-9+\- ]/g, '');
+            setFormData({ ...formData, [name]: valorLimpio });
+            return; // Salimos de la función para no ejecutar lo de abajo
+        }
+
+        // Si es cualquier otro campo (nombre, dirección, etc.), lo guardamos normal
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async (e) => {
