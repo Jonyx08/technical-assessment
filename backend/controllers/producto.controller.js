@@ -68,14 +68,6 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
-const { name, description, price, provider, image_url} = req.body;
-
-const result = await pool.query(
-    "INSERT INTO products (name, description, price, provider_id, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-    [name, description, price, provider_id, image_url]
-)
-
-
 // Exportamos todas las funciones para que las rutas las puedan usar
 module.exports = {
     crearProducto,

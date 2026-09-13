@@ -9,7 +9,11 @@ const providerRoutes = require('./routes/provider.routes');
 const app = express();
 
 // Middleware
-app.use(cors()); 
+app.use(cors({
+    origin: '*', // El asterisco significa "deja pasar a todos sin preguntar"
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // 2. Conectamos las rutas
